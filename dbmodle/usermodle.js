@@ -1,27 +1,15 @@
 const usersql=require('../db/userdb')
-const sqlpool=require('sqlpool')
-router.use(function(req,res,next){
-    sqlpool.connect()
-    next()
-})
-var responseData;
-router.use(function(req,res,next){
-    responseData={
-        success:0,
-        message:''
-    }
-    next()
-})
+const query=require('../utils/sqlpool')
 module.exports ={
-    insertUser:function(req,res,next) {
-        sqlpool.query(usersql.findUserWithUsername(),[req.username],(err,result)=>{
+    insertUser:function(req,res,next,responseData) {
+        query(usersql.findUserWithUsername,[req.username],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message='用户已存在，请登录！'
                 res.json(responseData)
                 return ;
             }else{
-                sqlpool.query(usersql.insertUser(),[req.body],(err,result)=>{
+                query(usersql.insertUser,[req.body],(err,result,fields)=>{
                     if(err){
                         responseData.success=0;
                         responseData.message='注册失败！'
@@ -40,11 +28,11 @@ module.exports ={
        
     },
     findUserWithUsernameAndPassword:function(req,res,next) {
-        sqlpool.query(usersql.findUserWithUsernameAndPassword()[req.body],(err,result)=>{
+        query(usersql.findUserWithUsernameAndPassword,[req.body],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="登陆失败！"
-                responseData.data=sqlpool.query(usersql.findUserWithUsernameAndPassword(req.body))
+                responseData.data=result
                 res.json(responseData)
                 return;
             }else{
@@ -58,7 +46,7 @@ module.exports ={
        
     },
     findAllUser:function() {
-        sqlpool.query(usersql.findAllUser(),[],(err,result)=>{
+        query(usersql.findAllUser,[],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="未获取到内容！"
@@ -76,7 +64,7 @@ module.exports ={
        
     },
     findUserWithUsername:function(req,res,next){
-        sqlpool.query(usersql.findUserWithUsername(),[req.body.username],(err,result)=>{
+        query(usersql.findUserWithUsernam,[req.body.username],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="查无此人！"
@@ -85,75 +73,110 @@ module.exports ={
             }else{
                 responseData.success=1;
                 responseData.message="成功！"
-                responseData.data=sqlpool.query(usersql.findUserWithUsername(req.body.username))
+                responseData.data=result
                 res.json(responseData)
                 return;
             }
         })
     },
     deleteUserById:function(req,res,next) {
-        sqlpool.query(usersql.findUserById(req.body.id),[req.body.id],(err,result)=>{
+        query(usersql.findUserById,[req.body.id],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="删除失败！"
                 res.json(responseData)
                 return;
             }else{
-                sqlpool.query(deleteUserById(req.body.id))
-                responseData.success=1;
-                responseData.message="删除成功！"
-                res.json(responseData)
-                return;
+                query(deleteUserById,[req.body.id],(err,result,fields)=>{
+                    if(err){
+                        responseData.success=0;
+                        responseData.message="删除失败！"
+                        res.json(responseData)
+                        return;
+                    }else{
+                        responseData.success=1;
+                        responseData.message="删除成功！"
+                        res.json(responseData)
+                        return;
+                    }
+                })
             }
         })
     },
     updataUserWithUsernameAndPassword:function(req,res,next) {
-        sqlpool.query(usersql.findUserWithUsernameAndPassword(),[req.body],(err,result)=>{
+        query(usersql.findUserWithUsernameAndPassword,[req.body],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="修改失败！"
                 res.json(responseData)
                 return;
             }else{
-                sqlpool.query(usersql.updataUserWithUsernameAndPassword(user))
-                responseData.success=1;
-                responseData.message="修改成功！"
-                res.json(responseData)
-                return;
+                query(usersql.updataUserWithUsernameAndPassword,[user],(err,result,fields)=>{
+                    if(err){
+                        responseData.success=0;
+                        responseData.message="修改失败！"
+                        res.json(responseData)
+                        return;
+                    }else{
+                        responseData.success=1;
+                        responseData.message="修改成功！"
+                        res.json(responseData)
+                        return;
+                    }
+                })
+               
             }
         })
        
     },
     updataUserWithUsername:function(req,res,next) {
-        sqlpool.query(usersql.findUserWithUsername(),[req.body.username],(err,result)=>{
+        query(usersql.findUserWithUsername,[req.body.username],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="修改失败！"
                 res.json(responseData)
                 return;
             }else{
-                sqlpool.query(usersql.updataUserWithUsername(username))
-                responseData.success=1;
-                responseData.message="修改成功！"
-                res.json(responseData)
-                return;
+                query(usersql.updataUserWithUsername,[username],(err,result,fields)=>{
+                    if(err){
+                        responseData.success=0;
+                        responseData.message="修改失败！"
+                        res.json(responseData)
+                        return;
+                    }else{
+                        responseData.success=1;
+                        responseData.message="修改成功！"
+                        res.json(responseData)
+                        return;
+                    }
+                })
+               
             }
         })
        
     },
     updataUserWithPassword:function(req,res,next) {
-        sqlpool.query(usersql.findUserWithUsername(),[req.body.password],(err,result)=>{
+        query(usersql.findUserWithUsername,[req.body.password],(err,result,fields)=>{
             if(err){
                 responseData.success=0;
                 responseData.message="修改失败！"
                 res.json(responseData)
                 return;
             }else{
-                sqlpool.query(usersql.updataUserWithPassword(password))
-                responseData.success=1;
-                responseData.message="修改成功！"
-                res.json(responseData)
-                return;
+                query(usersql.updataUserWithPassword,[password],(err,result,fields)=>{
+                    if(err){
+                        responseData.success=0;
+                        responseData.message="修改失败！"
+                        res.json(responseData)
+                        return;
+                    }else{
+                        responseData.success=1;
+                        responseData.message="修改成功！"
+                        res.json(responseData)
+                        return;
+                    }
+                })
+               
             }
         })
     },

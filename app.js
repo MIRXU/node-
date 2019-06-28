@@ -4,7 +4,7 @@ const swig=require("swig")
 const bodyPaeser =require('body-parser')
 const path=require("path")
 const cookieParser = require('cookie-parser');
- 
+
 // //若需要使用签名，需要指定一个secret,字符串,否者会报错
 // app.use(cookiePareser('xyj'));
 app.use('/public', express.static(path.join(__dirname, 'public')))
@@ -22,6 +22,7 @@ app.set('view engine','html');
 
 app.use("/login",require("./router/login"))
 app.use("/user",require("./router/user"))
+
 
 // app.listen(1234)
 module.exports =app

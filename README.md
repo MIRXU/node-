@@ -132,3 +132,4 @@ select * from tableB where id in(select key_id from tableA  where  age>a)
   显示表结构：desc tableA;
   显示所有表：show tables;
   使用某张表：use tableA;
+十一.
